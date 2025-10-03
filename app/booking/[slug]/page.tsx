@@ -13,7 +13,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { apiRequest } from "@/lib/api-config"
-import { MoveLeftIcon, MoveRightIcon } from "lucide-react"
+import { CheckCircle, MoveLeftIcon, MoveRightIcon } from "lucide-react"
 
 export default function BookingPage({ params }: { params: { slug: string } }) {
     // Define state
@@ -86,10 +86,7 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
             setCompletedTabs((prev) => new Set(prev).add("customer"))
             setActiveTab("customer")
         } else if (activeTab === "customer" && canProceedFromCustomer) {
-            setCompletedTabs((prev) => new Set(prev).add("payment"))
-            setActiveTab("payment")
-        } else if (activeTab === "payment" && canProceedFromPayment) {
-            handleSubmit()
+            // handleSubmit();
         }
     }
 
@@ -246,8 +243,9 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                             <MoveLeftIcon className="h-4 w-4" /> Back
                         </Button>
                         <Button onClick={handleNext} className="cursor-pointer" disabled={!canProceed || submitting}>
-                            {activeTab === "payment" ? (submitting ? "Submitting..." : "Confirm & Pay") : "Next"}
-                            <MoveRightIcon className="h-4 w-4" />
+                            {activeTab === "customer" && <CheckCircle className="h-4 w-4" />}
+                            {activeTab === "customer" ? (submitting ? "Submitting..." : "Submit Booking") : "Next"}
+                            {activeTab !== "customer" && <MoveRightIcon className="h-4 w-4" />}
                         </Button>
                     </div>
                 </div>
