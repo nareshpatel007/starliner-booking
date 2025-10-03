@@ -1,11 +1,21 @@
 import { NextResponse } from "next/server"
-import { getTours } from "@/lib/tours"
+import { apiRequest } from "@/lib/api-config"
 
 // GET all tours
 export async function GET() {
     try {
-        const tours = getTours()
-        return NextResponse.json({ success: true, data: tours })
+        // Send API request
+        const { data: requestData, error } = await apiRequest("live", "/api/tours/list", {
+            method: "POST"
+        });
+
+        // Handle response
+        if (error || !requestData) {
+            return NextResponse.json({ success: false, message: error || "Error: Tour list not found" }, { status: 500 })
+        }
+
+        // Send response
+        return NextResponse.json(requestData);
     } catch (error: any) {
         return NextResponse.json({ success: false, message: error.message }, { status: 500 })
     }
@@ -14,7 +24,8 @@ export async function GET() {
 // POST create new tour
 export async function POST(req: Request) {
     try {
-        const body = await req.json()
+        // Get request body
+        const body = await req.json();
         const { title, shortDescription, details, price, durationHours, image } = body;
 
         // Validate required fields
@@ -30,13 +41,24 @@ export async function POST(req: Request) {
             details,
             price: Number(price),
             durationHours: Number(durationHours),
-            image,
+            image
         }
 
-        console.log("[v0] Tour created:", newTour)
+        // Send API request
+        const { data: requestData, error } = await apiRequest("live", "/api/tours/create", {
+            method: "POST",
+            body: JSON.stringify(newTour),
+        });
 
+        // Handle response
+        if (error || !requestData) {
+            return NextResponse.json({ success: false, message: error || "Error: Tour not created" }, { status: 500 })
+        }
+
+        // Send response
         return NextResponse.json({ success: true, data: newTour, message: "Tour created successfully" })
     } catch (error: any) {
+        // Send response
         return NextResponse.json({ success: false, message: error.message }, { status: 500 })
     }
 }

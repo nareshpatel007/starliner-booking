@@ -1,15 +1,15 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Lock, Mail } from "lucide-react"
-import { apiRequest } from "@/lib/api-config"
+import type React from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Lock, Mail } from "lucide-react";
+import { apiRequest } from "@/lib/api-config";
+import Image from "next/image";
 
 export default function AdminLoginPage() {
     // Define state
@@ -28,22 +28,22 @@ export default function AdminLoginPage() {
         setIsLoading(true);
 
         // Make API request
-        const { data, error: apiError } = await apiRequest("/api/auth/login", {
+        const { data: requestData, error: apiError } = await apiRequest("local", "/api/auth/login", {
             method: "POST",
             body: JSON.stringify({ email, password })
         })
 
         // Handle response
-        if (apiError || !data) {
-            setError(apiError || "Login failed")
-            setIsLoading(false)
-            return
+        if (apiError || !requestData) {
+            setError(apiError || "Error: Login failed");
+            setIsLoading(false);
+            return;
         }
 
-        // Store token in localStorage
-        if (data.token) {
-            localStorage.setItem("admin_token", data.token)
-            localStorage.setItem("admin_user", JSON.stringify(data.user))
+        // Store token in cookie
+        if (requestData?.data?.token) {
+            document.cookie = `admin_token=${requestData?.data?.token}; path=/;`;
+            document.cookie = `admin_name=${requestData?.data?.user?.name}; path=/;`;
         }
 
         // Redirect to admin panel
@@ -55,8 +55,8 @@ export default function AdminLoginPage() {
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-primary/10 p-4">
             <Card className="w-full max-w-md shadow-soft-xl">
                 <CardHeader className="space-y-1 text-center">
-                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                        <Lock className="h-8 w-8" />
+                    <div className="mx-auto mb-4 flex items-center justify-center">
+                        <Image src="https://starlinerdreamtours.com/wp-content/uploads/2025/08/large_logo.png" alt="Logo" width={170} height={170} />
                     </div>
                     <CardTitle className="text-2xl font-bold">Admin Login</CardTitle>
                     <CardDescription>Enter your credentials to access the admin panel</CardDescription>
@@ -69,13 +69,14 @@ export default function AdminLoginPage() {
                                 <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                 <Input
                                     id="email"
-                                    type="email"
-                                    placeholder="admin@example.com"
+                                    type="text"
+                                    placeholder="Enter email or username"
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e: any) => setEmail(e.target.value)}
                                     className="pl-10"
                                     required
                                     disabled={isLoading}
+                                    autoComplete="off"
                                 />
                             </div>
                         </div>
@@ -87,9 +88,9 @@ export default function AdminLoginPage() {
                                 <Input
                                     id="password"
                                     type="password"
-                                    placeholder="Enter your password"
+                                    placeholder="Enter password"
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e: any) => setPassword(e.target.value)}
                                     className="pl-10"
                                     required
                                     disabled={isLoading}
@@ -97,7 +98,7 @@ export default function AdminLoginPage() {
                             </div>
                         </div>
 
-                        {error && <AlertDescription>{error}</AlertDescription>}
+                        {error && <span className="text-sm text-red-500 block mb-4">{error}</span>}
 
                         <Button type="submit" className="w-full cursor-pointer" disabled={isLoading}>
                             {isLoading ? "Signing in..." : "Sign In"}

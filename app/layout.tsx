@@ -8,29 +8,28 @@ import { SiteHeader, SiteFooter, MainWrapper } from "@/components/site-layout"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Professional Booking Platform",
-  description: "Book your perfect tour experience",
-  generator: "v0.app",
+    title: "Booking | Starliner Dream Tours",
+    description: "Book your perfect tour experience",
+    icons: {
+        icon: "https://starlinerdreamtours.com/wp-content/uploads/2025/08/cropped-logo-192x192.webp",
+    }
 }
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode
+    children: React.ReactNode
 }>) {
-  return (
-    <html lang="en">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <SiteHeader />
-
-          <MainWrapper>{children}</MainWrapper>
-
-          <SiteFooter />
-        </Suspense>
-
-        <Analytics />
-      </body>
-    </html>
-  )
+    return (
+        <html lang="en">
+            <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+                <Suspense fallback={<div>Loading...</div>}>
+                    <SiteHeader />
+                    <MainWrapper>{children}</MainWrapper>
+                    <SiteFooter />
+                </Suspense>
+                <Analytics />
+            </body>
+        </html>
+    )
 }

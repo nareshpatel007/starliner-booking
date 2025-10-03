@@ -3,13 +3,13 @@ export const API_BASE_URL = "https://starlinerdreamtours.com";
 export const API_BASE_TOKEN = "K8Ma1oWnZVJbXeMPwlY542C3968088";
 
 // Helper function to make API calls
-export async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<{ data?: T; error?: string }> {
+export async function apiRequest<T>(callType: string = 'local', endpoint: string, options?: RequestInit): Promise<{ data?: T; error?: string }> {
     try {
         // Construct the full URL
-        const url = endpoint.startsWith("http") ? endpoint : `${API_BASE_URL}${endpoint}`
+        const endpointUrl = (callType == 'local') ? endpoint : `${API_BASE_URL}${endpoint}`;
 
         // Make the API request
-        const response = await fetch(url, {
+        const response = await fetch(endpointUrl, {
             ...options,
             headers: {
                 "Content-Type": "application/json",
