@@ -12,36 +12,43 @@ import { Lock, Mail } from "lucide-react"
 import { apiRequest } from "@/lib/api-config"
 
 export default function AdminLoginPage() {
-    const router = useRouter()
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [error, setError] = useState("")
-    const [isLoading, setIsLoading] = useState(false)
+    // Define state
+    const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
+    // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setError("")
-        setIsLoading(true)
+        e.preventDefault();
 
+        // Reset state
+        setError("");
+        setIsLoading(true);
+
+        // Make API request
         const { data, error: apiError } = await apiRequest("/api/auth/login", {
             method: "POST",
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ email, password })
         })
 
+        // Handle response
         if (apiError || !data) {
             setError(apiError || "Login failed")
             setIsLoading(false)
             return
         }
 
-        // Store token in localStorage (in production, use httpOnly cookies)
+        // Store token in localStorage
         if (data.token) {
             localStorage.setItem("admin_token", data.token)
             localStorage.setItem("admin_user", JSON.stringify(data.user))
         }
 
-        router.push("/admin_panel")
-        router.refresh()
+        // Redirect to admin panel
+        router.push("/admin_panel");
+        router.refresh();
     }
 
     return (
