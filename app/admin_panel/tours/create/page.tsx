@@ -26,6 +26,7 @@ export default function CreateTourPage() {
         image: "",
     })
 
+    // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setSubmitting(true)
@@ -34,10 +35,12 @@ export default function CreateTourPage() {
         const { data, error } = await apiRequest("local", "/api/tours", {
             method: "POST",
             body: JSON.stringify(formData),
-        })
+        });
 
+        // Update state
         setSubmitting(false);
 
+        // Check for errors
         if (error) {
             toast({
                 title: "Error",
@@ -51,10 +54,10 @@ export default function CreateTourPage() {
         toast({
             title: "Tour created",
             description: "The tour has been successfully created.",
-        })
+        });
 
         // Redirect to tours page
-        router.push("/admin_panel/tours")
+        router.push("/admin_panel/tours");
     }
 
     return (

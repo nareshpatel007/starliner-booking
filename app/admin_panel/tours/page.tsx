@@ -56,7 +56,7 @@ export default function ToursPage() {
         total: tours.length,
         totalBookings: bookings.length || 0,
         totalRevenue: bookings && bookings.length > 0 && bookings.reduce((sum, b) => sum + b.totalPrice, 0),
-        avgPrice: tours.length > 0 ? Math.round(tours.reduce((sum, t) => sum + t.price, 0) / tours.length) : 0,
+        avgPrice: tours.length > 0 ? Math.round(tours.reduce((sum, t) => Number(sum) + Number(t.price), 0) / tours.length) : 0,
     }
 
     if (loading) {
@@ -72,27 +72,24 @@ export default function ToursPage() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-foreground tracking-tight">Tours</h1>
+                    <h1 className="text-3xl font-bold text-foreground tracking-tight">Tours & Activities</h1>
                     <p className="text-muted-foreground mt-1">Manage your tour offerings</p>
                 </div>
                 <Link href="/admin_panel/tours/create">
-                    <Button className="shadow-soft hover:shadow-soft-lg transition-smooth">
+                    <Button className="shadow-soft hover:shadow-soft-lg transition-smooth cursor-pointer">
                         <Plus className="h-4 w-4" /> Add Tour
                     </Button>
                 </Link>
             </div>
-
-            {/* Stats */}
             <div className="grid gap-4 md:grid-cols-4">
                 <Card className="shadow-soft">
                     <CardHeader>
                         <CardTitle className="text-sm font-medium text-muted-foreground">Total Tours</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-foreground">{stats.total || 0}</div>
+                        <div className="text-2xl font-bold text-primary">{stats.total || 0}</div>
                     </CardContent>
                 </Card>
                 <Card className="shadow-soft">
@@ -113,10 +110,10 @@ export default function ToursPage() {
                 </Card>
                 <Card className="shadow-soft">
                     <CardHeader>
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Avg Price</CardTitle>
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Average Price</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-foreground">${stats.avgPrice || 0}</div>
+                        <div className="text-2xl font-bold text-primary">${stats.avgPrice || 0}</div>
                     </CardContent>
                 </Card>
             </div>
@@ -144,11 +141,11 @@ export default function ToursPage() {
                     </Card>
                 ) : (
                     filteredTours.map((tour) => (
-                        <Card key={tour.id} className="shadow-soft hover:shadow-soft-lg transition-smooth overflow-hidden">
-                            <div className="relative h-48 w-full bg-muted">
+                        <Card key={tour?.id} className="shadow-soft hover:shadow-soft-lg pt-0 transition-smooth overflow-hidden">
+                            <div className="relative h-55 w-full bg-muted">
                                 <Image
-                                    src={tour.image || "/placeholder.svg"}
-                                    alt={tour.title}
+                                    src={tour?.image}
+                                    alt={tour?.title}
                                     fill
                                     className="object-cover"
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -156,20 +153,20 @@ export default function ToursPage() {
                             </div>
                             <CardHeader>
                                 <div className="flex items-start justify-between gap-2">
-                                    <CardTitle className="text-lg">{tour.title}</CardTitle>
-                                    <Badge className="bg-primary/10 text-primary shrink-0">${tour.price}</Badge>
+                                    <CardTitle className="text-lg">{tour?.title}</CardTitle>
+                                    <Badge className="bg-primary/10 text-primary shrink-0">${tour?.price}</Badge>
                                 </div>
-                                <p className="text-sm text-muted-foreground line-clamp-2">{tour.short_description}</p>
+                                <p className="text-sm text-muted-foreground line-clamp-2">{tour?.short_description}</p>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="flex items-center justify-between text-sm">
                                     <div className="flex items-center gap-2 text-muted-foreground">
                                         <Clock className="h-4 w-4" />
-                                        <span>{tour.duration_hours} Hours</span>
+                                        <span>{tour?.duration_hours} Hours</span>
                                     </div>
                                     {tour.totalBookings > 0 && <div className="flex items-center gap-2 text-muted-foreground">
                                         <DollarSign className="h-4 w-4" />
-                                        <span>{tour.totalBookings} bookings</span>
+                                        <span>{tour?.totalBookings} bookings</span>
                                     </div>}
                                 </div>
                                 {tour.totalRevenue > 0 && <div className="rounded-lg bg-muted p-3">
@@ -178,19 +175,19 @@ export default function ToursPage() {
                                         <span className="font-semibold text-foreground">${tour.totalRevenue}</span>
                                     </div>
                                 </div>}
-                                <div className="flex gap-2">
-                                    <Link href={`/admin_panel/tours/${tour.id}`} className="flex-1">
-                                        <Button variant="outline_primary" size="sm" className="w-full cursor-pointer bg-transparent">
-                                            <Eye className="mr-2 h-4 w-4" /> View
+                                <div className="grid grid-cols-3 gap-2">
+                                    <Link href={`/admin_panel/tours/${tour.id}`}>
+                                        <Button variant="outline" size="sm" className="w-full cursor-pointer bg-transparent">
+                                            <Eye className="mr-1 h-4 w-4" /> View
                                         </Button>
                                     </Link>
-                                    <Link href={`/admin_panel/tours/${tour.id}/edit`} className="flex-1">
-                                        <Button variant="outline_success" size="sm" className="w-full cursor-pointer bg-transparent">
-                                            <Edit className="mr-2 h-4 w-4" /> Edit
+                                    <Link href={`/admin_panel/tours/${tour.id}/edit`}>
+                                        <Button variant="outline" size="sm" className="w-full cursor-pointer bg-transparent">
+                                            <Edit className="mr-1 h-4 w-4" /> Update
                                         </Button>
                                     </Link>
-                                    <Button variant="outline_danger" size="sm" className="text-destructive cursor-pointer bg-transparent">
-                                        <Trash2 className="h-4 w-4" />
+                                    <Button variant="outline" size="sm" className="text-destructive cursor-pointer bg-transparent">
+                                        <Trash2 className="mr-1 h-4 w-4" /> Delete
                                     </Button>
                                 </div>
                             </CardContent>

@@ -11,7 +11,7 @@ function formatPrice(n: number) {
 
 export function TourCard({ tour }: { tour: Tour }) {
     return (
-        <Card className="group overflow-hidden bg-card shadow-soft hover:shadow-soft-lg transition-smooth border-border/50">
+        <Card className="group overflow-hidden bg-card pt-0 shadow-soft hover:shadow-soft-lg transition-smooth border-border/50">
             <div className="relative h-52 w-full overflow-hidden sm:h-60 lg:h-52">
                 <Image
                     src={tour.image || "/placeholder.svg"}
@@ -27,18 +27,18 @@ export function TourCard({ tour }: { tour: Tour }) {
                 <h3 className="text-balance text-lg font-semibold leading-tight group-hover:text-primary transition-smooth">
                     {tour.title}
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{tour.shortDescription}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{tour.short_description}</p>
             </CardHeader>
             <CardContent className="flex items-center justify-between pb-4">
                 <span className="text-lg font-bold text-primary">{formatPrice(tour.price)}</span>
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                     <Clock className="h-4 w-4" />
-                    <span>{tour.durationHours} hrs</span>
+                    <span>{tour.duration_hours} hrs</span>
                 </div>
             </CardContent>
             <CardFooter className="pt-0">
                 <Button asChild className="w-full font-semibold shadow-sm hover:shadow-md transition-smooth">
-                    <Link href={`/booking/${tour.id}`} aria-label={`Book ${tour.title} now`}>
+                    <Link href={`/booking/${tour.slug}`} aria-label={`Book ${tour.title} now`}>
                         Book Now
                     </Link>
                 </Button>

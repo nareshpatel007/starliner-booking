@@ -7,9 +7,11 @@ import { apiRequest } from "@/lib/api-config"
 import type { Tour } from "@/lib/tours"
 
 export default function Page() {
+    // Define state
     const [tours, setTours] = useState<Tour[]>([])
     const [loading, setLoading] = useState(true)
 
+    // Init tours
     useEffect(() => {
         async function fetchTours() {
             setLoading(true);
@@ -18,15 +20,16 @@ export default function Page() {
             setLoading(false);
         }
         fetchTours();
-    }, [])
+    }, []);
 
+    // Loading
     if (loading) {
         return (
             <main className="mx-auto max-w-7xl px-4 py-8 md:py-12">
                 <div className="flex items-center justify-center min-h-[400px]">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                        <p className="text-muted-foreground">Loading tours...</p>
+                        <p className="text-muted-foreground">Loading tours & activities...</p>
                     </div>
                 </div>
             </main>
@@ -34,7 +37,7 @@ export default function Page() {
     }
 
     return (
-        <main className="mx-auto max-w-7xl space-y-8 px-4 py-8 md:py-12">
+        <main className="mx-auto max-w-7xl space-y-8 px-4 py-10">
             <Stepper current={1} />
             <header className="space-y-3 text-center">
                 <h1 className="text-balance text-3xl font-bold text-foreground md:text-3xl lg:text-3xl tracking-tight">

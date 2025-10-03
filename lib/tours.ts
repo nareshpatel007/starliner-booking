@@ -13,6 +13,7 @@ export type TourSchedule = {
 export type Tour = {
     id: string
     title: string
+    slug: string
     short_description: string
     price: number
     duration_hours: number
@@ -24,6 +25,7 @@ export type Tour = {
 const tours: Tour[] = [
     {
         id: "sunset-sail",
+        slug: "sunset-sail-cruise",
         title: "Sunset Sail Cruise",
         short_description: "Glide across the bay as the sun dips below the horizon.",
         price: 129,
@@ -45,6 +47,7 @@ const tours: Tour[] = [
     },
     {
         id: "city-walk",
+        slug: "historic-city-walking-tour",
         title: "Historic City Walking Tour",
         short_description: "Discover hidden alleys, architecture, and stories of the old town.",
         price: 49,
@@ -65,6 +68,7 @@ const tours: Tour[] = [
     },
     {
         id: "mountain-hike",
+        slug: "guided-mountain-hike",
         title: "Guided Mountain Hike",
         short_description: "A moderate ascent with panoramic views and expert guides.",
         price: 99,
@@ -83,6 +87,7 @@ const tours: Tour[] = [
     },
     {
         id: "wine-country",
+        slug: "wine-country-day-trip",
         title: "Wine Country Day Trip",
         short_description: "Taste award-winning wines and stroll through vineyards.",
         price: 159,
@@ -103,6 +108,7 @@ const tours: Tour[] = [
     },
     {
         id: "reef-snorkel",
+        slug: "coral-reef-snorkeling",
         title: "Coral Reef Snorkeling",
         short_description: "Explore vibrant marine life with top-quality gear included.",
         price: 139,
@@ -123,6 +129,7 @@ const tours: Tour[] = [
     },
     {
         id: "food-tour",
+        slug: "street-food-safari",
         title: "Street Food Safari",
         short_description: "Savor local flavors on a chef-curated tasting trail.",
         price: 69,

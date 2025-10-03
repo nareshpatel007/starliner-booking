@@ -30,24 +30,23 @@ export async function POST(req: Request) {
 
         // Validate required fields
         if (!title || !shortDescription || !details || !price || !durationHours || !image) {
-            return NextResponse.json({ success: false, message: "Missing required fields" }, { status: 400 })
+            return NextResponse.json({ success: false, message: "Missing required fields" }, { status: 400 });
         }
 
         // Mock successful creation
         const newTour = {
-            id: `tour-${Date.now()}`,
             title,
             shortDescription,
             details,
             price: Number(price),
             durationHours: Number(durationHours),
             image
-        }
+        };
 
         // Send API request
         const { data: requestData, error } = await apiRequest("live", "/api/tours/create", {
             method: "POST",
-            body: JSON.stringify(newTour),
+            body: JSON.stringify(newTour)
         });
 
         // Handle response
@@ -56,9 +55,9 @@ export async function POST(req: Request) {
         }
 
         // Send response
-        return NextResponse.json({ success: true, data: newTour, message: "Tour created successfully" })
+        return NextResponse.json(requestData);
     } catch (error: any) {
         // Send response
-        return NextResponse.json({ success: false, message: error.message }, { status: 500 })
+        return NextResponse.json({ success: false, message: error.message }, { status: 500 });
     }
 }

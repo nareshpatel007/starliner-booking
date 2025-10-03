@@ -26,6 +26,8 @@ const buttonVariants = cva(
                     'border-1 border-green-600 text-green-600 hover:bg-green-600 hover:text-white dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
                 outline_danger:
                     'border border-destructive text-destructive hover:bg-destructive hover:text-white dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
+                outline_default:
+                    'border border-input text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
             },
             size: {
                 default: 'h-9 px-4 py-2 has-[>svg]:px-3',
