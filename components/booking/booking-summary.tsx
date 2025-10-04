@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import type { Tour } from "@/lib/tours"
-import { Calendar, Clock, Users, Mail, Phone } from "lucide-react"
+import { Calendar, Clock, Users, Mail, Phone, DollarSign } from "lucide-react"
 
 function formatPrice(n: number) {
     return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n)
@@ -17,11 +17,6 @@ type BookingSummaryProps = {
     children812: number
     children37: number
     infants: number
-    name: string
-    email: string
-    phone: string
-    postalCode: string
-    country: string
 }
 
 export function BookingSummary({
@@ -31,12 +26,7 @@ export function BookingSummary({
     adults,
     children812,
     children37,
-    infants,
-    name,
-    email,
-    phone,
-    postalCode,
-    country,
+    infants
 }: BookingSummaryProps) {
     const totalTravellers = adults + children812 + children37 + infants
 
@@ -66,7 +56,10 @@ export function BookingSummary({
                 </div>
 
                 <div className="flex items-center justify-between border-b border-border/50 pb-3">
-                    <span className="text-sm text-muted-foreground">Price per person</span>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <DollarSign className="h-4 w-4" />
+                        <span>Price per person</span>
+                    </div>
                     <span className="text-sm font-semibold text-primary">{formatPrice(tour.price)}</span>
                 </div>
 

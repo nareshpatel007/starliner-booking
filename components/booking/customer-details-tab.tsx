@@ -12,8 +12,8 @@ type CustomerDetailsTabProps = {
     setEmail: (e: string) => void
     phone: string
     setPhone: (p: string) => void
-    postalCode: string
-    setPostalCode: (p: string) => void
+    address: string
+    setAddress: (p: string) => void
     country: string
     setCountry: (c: string) => void
 }
@@ -25,8 +25,8 @@ export function CustomerDetailsTab({
     setEmail,
     phone,
     setPhone,
-    postalCode,
-    setPostalCode,
+    address,
+    setAddress,
     country,
     setCountry,
 }: CustomerDetailsTabProps) {
@@ -88,8 +88,8 @@ export function CustomerDetailsTab({
                             id="address"
                             placeholder="Enter address"
                             autoComplete="off"
-                            value={postalCode}
-                            onChange={(e) => setPostalCode(e.target.value)}
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
                             className="h-11 transition-smooth focus:ring-2 focus:ring-primary"
                         />
                     </div>

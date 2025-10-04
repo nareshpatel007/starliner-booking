@@ -8,12 +8,12 @@ import { ScheduleTab } from "@/components/booking/schedule-tab"
 import { TravelersTab } from "@/components/booking/travelers-tab"
 import { CustomerDetailsTab } from "@/components/booking/customer-details-tab"
 import { PaymentTab } from "@/components/booking/payment-tab"
-import { getTourById, Tour } from "@/lib/tours"
+import { Tour } from "@/lib/tours"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { apiRequest } from "@/lib/api-config"
-import { CheckCircle, MoveLeftIcon, MoveRightIcon } from "lucide-react"
+import { CheckCircle, Loader, MoveLeftIcon, MoveRightIcon } from "lucide-react"
 
 export default function BookingPage({ params }: { params: { slug: string } }) {
     // Define state
@@ -31,13 +31,14 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
-    const [postalCode, setPostalCode] = useState("");
+    const [address, setAddress] = useState("");
     const [country, setCountry] = useState("United States");
     const [cardNumber, setCardNumber] = useState("");
     const [cardName, setCardName] = useState("");
     const [expiryDate, setExpiryDate] = useState("");
     const [cvv, setCvv] = useState("");
     const [submitting, setSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     // Init single tour
     useEffect(() => {
@@ -70,7 +71,7 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
         name.trim().length > 1 &&
         /\S+@\S+\.\S+/.test(email) &&
         phone.trim().length >= 7 &&
-        postalCode.trim().length > 0 &&
+        address.trim().length > 0 &&
         country.trim().length > 0
     const canProceedFromPayment =
         cardNumber.trim().length >= 15 &&
@@ -86,7 +87,7 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
             setCompletedTabs((prev) => new Set(prev).add("customer"))
             setActiveTab("customer")
         } else if (activeTab === "customer" && canProceedFromCustomer) {
-            // handleSubmit();
+            handleSubmit();
         }
     }
 
@@ -97,60 +98,68 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
     }
 
     async function handleSubmit() {
-        if (!selectedDate) return
+        // Handle submit
+        if (!selectedDate) return;
         setSubmitting(true);
-        const payload = {
-            tourId: singleTour?.id,
-            tourName: singleTour?.title,
-            date: selectedDate.toISOString(),
-            time: timeSlot,
-            adults,
-            children812,
-            children37,
-            infants,
-            totalTravelers: totalTravellers,
-            name,
-            email,
-            phone,
-            postalCode,
-            country,
-            cardNumber,
-            cardName,
-            expiryDate,
-            cvv,
-        };
+        setErrorMessage("");
 
         try {
+            // Submit booking
             const res = await fetch("/api/bookings", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            })
-            const data = await res.json()
-            if (!res.ok) throw new Error(data?.message || "Failed to submit booking")
+                body: JSON.stringify({
+                    tourId: singleTour?.id,
+                    date: selectedDate.toISOString(),
+                    time: timeSlot,
+                    adults,
+                    children812,
+                    children37,
+                    infants,
+                    totalTravelers: totalTravellers,
+                    name,
+                    email,
+                    phone,
+                    address,
+                    singlePrice: singleTour?.price
+                })
+            });
 
-            const params = new URLSearchParams({
-                ref: data?.id || "",
-                date: selectedDate.toISOString(),
-                time: timeSlot,
-                members: String(totalTravellers),
-                name,
-                email,
-            })
-            router.push(`/booking/${singleTour.slug}/thank-you?${params.toString()}`)
+            // Handle response
+            const data = await res.json();
+
+            // Handle error
+            if (!res.ok) throw new Error(data?.message || "Failed to submit booking");
+
+            // If booking done
+            if (!data?.booking_id) {
+                setErrorMessage(`Error: ${data?.message}`);
+            } else {
+                // Handle success
+                const params = new URLSearchParams({ ref: data?.booking_id });
+
+                // Redirect to thank you
+                router.push(`/booking/${singleTour?.slug}/thank-you?${params.toString()}`);
+            }
         } catch (err: any) {
-            toast({ title: "Submission failed", description: err.message || "Please try again.", variant: "destructive" })
+            // Handle error
+            toast({
+                title: "Submission failed",
+                description: err.message || "Please try again.",
+                variant: "destructive"
+            });
         } finally {
+            // Set submitting
             setSubmitting(false);
         }
     }
 
     // Define current step
     const getCurrentStep = (): 1 | 2 | 3 | 4 => {
-        if (activeTab === "schedule") return 1
-        if (activeTab === "travelers") return 2
-        if (activeTab === "customer") return 3
-        return 4
+        if (activeTab === "schedule") return 1;
+        if (activeTab === "travelers") return 2;
+        if (activeTab === "customer") return 3;
+        return 4;
     }
 
     // Define can proceed
@@ -194,7 +203,6 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                                 setMonthOffset={setMonthOffset}
                             />
                         </TabsContent>
-
                         <TabsContent value="travelers">
                             <TravelersTab
                                 adults={adults}
@@ -207,7 +215,6 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                                 setInfants={setInfants}
                             />
                         </TabsContent>
-
                         <TabsContent value="customer">
                             <CustomerDetailsTab
                                 name={name}
@@ -216,13 +223,12 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                                 setEmail={setEmail}
                                 phone={phone}
                                 setPhone={setPhone}
-                                postalCode={postalCode}
-                                setPostalCode={setPostalCode}
+                                address={address}
+                                setAddress={setAddress}
                                 country={country}
                                 setCountry={setCountry}
                             />
                         </TabsContent>
-
                         {/* <TabsContent value="payment">
                             <PaymentTab
                                 cardNumber={cardNumber}
@@ -237,13 +243,15 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                         </TabsContent> */}
                     </Tabs>
 
-                    {/* Navigation buttons */}
+                    {errorMessage && <span className="mt-3 block text-sm text-red-500">{errorMessage}</span>}
+
                     <div className="mt-6 flex items-center justify-between">
                         <Button variant="outline" className="cursor-pointer" onClick={handleBack} disabled={activeTab === "schedule"}>
                             <MoveLeftIcon className="h-4 w-4" /> Back
                         </Button>
                         <Button onClick={handleNext} className="cursor-pointer" disabled={!canProceed || submitting}>
-                            {activeTab === "customer" && <CheckCircle className="h-4 w-4" />}
+                            {!submitting && activeTab === "customer" && <CheckCircle className="h-4 w-4" />}
+                            {submitting && <Loader className="h-4 w-4 animate-spin" />}
                             {activeTab === "customer" ? (submitting ? "Submitting..." : "Submit Booking") : "Next"}
                             {activeTab !== "customer" && <MoveRightIcon className="h-4 w-4" />}
                         </Button>
@@ -258,11 +266,6 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                         children812={children812}
                         children37={children37}
                         infants={infants}
-                        name={name}
-                        email={email}
-                        phone={phone}
-                        postalCode={postalCode}
-                        country={country}
                     />
                 </aside>
             </section>

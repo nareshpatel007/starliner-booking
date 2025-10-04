@@ -18,9 +18,9 @@ export function Stepper({ current, className }: StepperProps) {
     return (
         <nav
             aria-label="Progress"
-            className={cn("w-full rounded-xl border border-border/50 bg-card px-4 py-4 shadow-soft", className)}
+            className={cn("w-full rounded-xl hidden md:block lg:block border border-border/50 bg-card px-4 py-4 shadow-soft", className)}
         >
-            <ol className="mx-auto flex max-w-5xl flex-wrap text-center items-center gap-2 md:gap-4">
+            <ol className="mx-auto flex max-w-4xl flex-wrap text-center items-center gap-2 md:gap-4">
                 {steps.map((s, i) => {
                     const active = s.id === current
                     const completed = s.id < current
